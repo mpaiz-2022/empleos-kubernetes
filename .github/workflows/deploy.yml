@@ -20,9 +20,26 @@ jobs:
           echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 -d > ~/.kube/config
           chmod 600 ~/.kube/config
 
-      - name: Aplicar Kubernetes YAMLs
+      - name: Aplicar PostgreSQL en Kubernetes
         run: |
           kubectl apply -f deploy/postgres-deployment.yaml
+
+      - name: Esperar a que PostgreSQL esté listo
+        run: |
+          echo "Esperando 10s para que PostgreSQL se inicie..."
+          sleep 10
+          kubectl wait --for=condition=ready pod -l app=postgres --timeout=60s
+
+      - name: Ejecutar migraciones con Alembic
+        run: |
+          kubectl apply -f deploy/alembic-job.yaml
+
+      - name: Esperar a que el Job de Alembic termine
+        run: |
+          kubectl wait --for=condition=complete job/alembic-migration --timeout=60s
+
+      - name: Aplicar Backend y Frontend en Kubernetes
+        run: |
           kubectl apply -f deploy/backend-deployment.yaml
           kubectl apply -f deploy/frontend-deployment.yaml
           kubectl apply -f deploy/ingress.yaml

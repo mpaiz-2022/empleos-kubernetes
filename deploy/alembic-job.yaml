@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: alembic-migration
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: alembic
+          image: postgres:14
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              PGPASSWORD=password psql -U user -h postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'empleos'" | grep -q 1 || \
+              PGPASSWORD=password psql -U user -h postgres -c "CREATE DATABASE empleos";
+              alembic upgrade head
+          env:
+            - name: PGPASSWORD
+              value: "password"
+            - name: PGUSER
+              value: "user"
+            - name: PGDATABASE
+              value: "postgres"
+            - name: PGHOST
+              value: "postgres"
