@@ -1,0 +1,32 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+  repository_dispatch:
+    types: [deploy-backend, deploy-frontend]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Configurar acceso a Kubernetes en el VPS
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Aplicar Kubernetes YAMLs
+        run: |
+          kubectl apply -f deploy/postgres-deployment.yaml
+          kubectl apply -f deploy/backend-deployment.yaml
+          kubectl apply -f deploy/frontend-deployment.yaml
+          kubectl apply -f deploy/ingress.yaml
+
+      - name: Verificar los Pods
+        run: |
+          kubectl get pods -A
