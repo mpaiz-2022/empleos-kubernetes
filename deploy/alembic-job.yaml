@@ -8,7 +8,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: alembic
-          image: wilpaiz/omega-empleos-back  # 🔥 Imagen del backend sin modificar
+          image: wilpaiz/omega-empleos-back
           command: ["/bin/sh", "-c"]
           args:
             - |

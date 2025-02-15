@@ -27,8 +27,8 @@ jobs:
 
       - name: Esperar a que PostgreSQL esté listo
         run: |
-          echo "Esperando 20s para que PostgreSQL se inicie..."
-          sleep 20
+          echo "Esperando 30s para que PostgreSQL se inicie..."
+          sleep 30
           kubectl wait --for=condition=ready pod -l app=postgres --timeout=90s
 
       - name: Eliminar `Job` de Alembic si existe
