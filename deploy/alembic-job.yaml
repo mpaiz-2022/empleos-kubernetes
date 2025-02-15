@@ -8,19 +8,28 @@ spec:
       restartPolicy: Never
       containers:
         - name: alembic
-          image: postgres:14
+          image: wilpaiz/omega-empleos-back
           command: ["/bin/sh", "-c"]
           args:
             - |
+              echo "Esperando a que PostgreSQL esté listo...";
+              sleep 20;
+              until PGPASSWORD=password psql -U user -h postgres -d empleos -c "SELECT 1" > /dev/null 2>&1; do
+                echo "PostgreSQL no está listo, reintentando...";
+                sleep 5;
+              done;
+              echo "PostgreSQL está listo. Creando BD si no existe...";
               PGPASSWORD=password psql -U user -h postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'empleos'" | grep -q 1 || \
               PGPASSWORD=password psql -U user -h postgres -c "CREATE DATABASE empleos";
-              alembic upgrade head
+              echo "Ejecutando migraciones con Alembic...";
+              alembic upgrade head;
+              echo "Migraciones completadas."
           env:
             - name: PGPASSWORD
               value: "password"
             - name: PGUSER
               value: "user"
             - name: PGDATABASE
-              value: "postgres"
+              value: "empleos"
             - name: PGHOST
               value: "postgres"
