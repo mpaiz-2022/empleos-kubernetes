@@ -6,6 +6,7 @@ on:
       - main
   repository_dispatch:
     types: [deploy-backend, deploy-frontend]
+  workflow_dispatch:
 
 jobs:
   deploy:
