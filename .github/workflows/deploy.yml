@@ -51,7 +51,7 @@ jobs:
 
       - name: Reiniciar los Pods para usar la última imagen
         run: |
-          kubectl rollout restart deployment backend frontend
+          kubectl rollout restart deployment fastapi frontend
 
       - name: Verificar los Pods
         run: |

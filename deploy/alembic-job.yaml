@@ -8,13 +8,12 @@ spec:
       restartPolicy: Never
       containers:
         - name: alembic
-          image: python:3.10
+          image: wilpaiz/omega-empleos-back  # 🔥 Imagen del backend sin modificar
           command: ["/bin/sh", "-c"]
           args:
             - |
               echo "Instalando dependencias necesarias...";
               apt-get update && apt-get install -y postgresql-client;
-              pip install --no-cache-dir alembic sqlalchemy asyncpg psycopg2-binary;
 
               echo "Esperando a que PostgreSQL esté listo...";
               sleep 20;
