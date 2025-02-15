@@ -24,11 +24,11 @@ spec:
               value: "empleos"
           resources:
             requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
               memory: "512Mi"
               cpu: "500m"
-            limits:
-              memory: "1Gi"
-              cpu: "750m"
           ports:
             - containerPort: 5432
 ---
