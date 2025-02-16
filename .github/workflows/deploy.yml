@@ -73,9 +73,9 @@ jobs:
         run: |
           kubectl apply -f deploy/frontend-deployment.yaml
 
-      - name: Reiniciar frontend para aplicar cambios
+      - name: Eliminar el Pod de Frontend para forzar el redeploy
         run: |
-          kubectl rollout restart deployment frontend
+          kubectl delete pod -l app=frontend --ignore-not-found=true
 
       - name: Verificar los Pods
         run: |
