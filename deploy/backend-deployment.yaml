@@ -15,6 +15,7 @@ spec:
       containers:
         - name: fastapi
           image: wilpaiz/omega-empleos-back:latest
+          imagePullPolicy: Always
           env:
             - name: DATABASE_URL
               value: "postgresql+asyncpg://user:password@postgres:5432/empleos"
