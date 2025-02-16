@@ -30,11 +30,5 @@ spec:
               alembic upgrade head;
               echo "Migraciones completadas."
           env:
-            - name: PGPASSWORD
-              value: "password"
-            - name: PGUSER
-              value: "user"
-            - name: PGDATABASE
-              value: "empleos"
-            - name: PGHOST
-              value: "postgres"
+            - name: DATABASE_URL
+              value: "postgresql+asyncpg://user:password@postgres:5432/empleos"
