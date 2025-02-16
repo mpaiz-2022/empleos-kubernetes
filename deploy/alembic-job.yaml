@@ -23,8 +23,9 @@ spec:
               done;
               
               echo "PostgreSQL está listo. Creando BD si no existe...";
-              PGPASSWORD=password psql -U user -h postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'empleos'" | grep -q 1 || \
-              PGPASSWORD=password psql -U user -h postgres -c "CREATE DATABASE empleos";
+
+              PGPASSWORD=password psql -U user -h postgres -d postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'empleos'" | grep -q 1 || \
+              PGPASSWORD=password psql -U user -h postgres -d postgres -c "CREATE DATABASE empleos";
 
               echo "Ejecutando migraciones con Alembic...";
               alembic upgrade head;
