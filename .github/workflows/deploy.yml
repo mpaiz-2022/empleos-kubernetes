@@ -9,7 +9,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  deploy-backend:
+    if: github.event.action == 'deploy-backend' || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout código
@@ -43,11 +44,38 @@ jobs:
         run: |
           kubectl wait --for=condition=complete job/alembic-migration --timeout=120s
 
-      - name: Aplicar Backend y Frontend en Kubernetes
+      - name: Aplicar Backend en Kubernetes
         run: |
           kubectl apply -f deploy/backend-deployment.yaml
+
+      - name: Eliminar el Pod de Backend para forzar el redeploy
+        run: |
+          kubectl delete pod -l app=fastapi --ignore-not-found=true
+
+      - name: Verificar los Pods
+        run: |
+          kubectl get pods -A
+
+  deploy-frontend:
+    if: github.event.action == 'deploy-frontend' || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Configurar acceso a Kubernetes en el VPS
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG_BASE64 }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Aplicar Frontend en Kubernetes
+        run: |
           kubectl apply -f deploy/frontend-deployment.yaml
-          kubectl apply -f deploy/ingress.yaml
+
+      - name: Reiniciar frontend para aplicar cambios
+        run: |
+          kubectl rollout restart deployment frontend
 
       - name: Verificar los Pods
         run: |
