@@ -15,8 +15,6 @@ spec:
               echo "Instalando dependencias necesarias...";
               apt-get update && apt-get install -y postgresql-client;
 
-              echo "Esperando a que PostgreSQL esté listo...";
-              sleep 20;
               until PGPASSWORD=password psql -U user -h postgres -d empleos -c "SELECT 1" > /dev/null 2>&1; do
                 echo "PostgreSQL no está listo, reintentando...";
                 sleep 5;

@@ -28,9 +28,7 @@ jobs:
 
       - name: Esperar a que PostgreSQL esté listo
         run: |
-          echo "Esperando 10s para que PostgreSQL se inicie..."
-          sleep 10
-          kubectl wait --for=condition=ready pod -l app=postgres --timeout=90s
+          kubectl wait --for=condition=ready pod -l app=postgres --timeout=100s
 
       - name: Eliminar `Job` de Alembic si existe
         run: |
@@ -42,7 +40,7 @@ jobs:
 
       - name: Esperar a que el Job de Alembic termine
         run: |
-          kubectl wait --for=condition=complete job/alembic-migration --timeout=120s
+          kubectl wait --for=condition=complete job/alembic-migration --timeout=140s
 
       - name: Aplicar Backend en Kubernetes
         run: |
